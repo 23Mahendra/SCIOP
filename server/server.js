@@ -29,7 +29,7 @@ if (PROD && (!JWT_SECRET || JWT_SECRET.length < 32)) {
   throw new Error('Set JWT_SECRET to a random secret with at least 32 characters.');
 }
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' }, contentSecurityPolicy: false }));
-app.use(cors({ origin: process.env.APP_ORIGIN ? process.env.APP_ORIGIN.split(',').map(x=>x.trim()) : true, credentials: true }));
+app.use(cors({ origin: process.env.APP_ORIGIN ? process.env.APP_ORIGIN.split(',').map(x=>x.trim()) : false, credentials: true }));
 app.use(express.json({limit:'2mb'}));
 app.use(cookieParser());
 app.use((req,res,next)=>{res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');next();});
@@ -91,6 +91,24 @@ app.post('/api/auth/login',validate(z.object({email:z.string().email().transform
 }));
 app.post('/api/auth/logout',asyncRoute(async(req,res)=>{const raw=req.cookies.sciop_session;if(raw)await q('DELETE FROM sessions WHERE token_hash=$1',[hash(raw)]);res.clearCookie('sciop_session',{path:'/'}).json({ok:true});}));
 app.get('/api/auth/me',auth,asyncRoute(async(req,res)=>res.json({user:publicProfile(req.user)})));
+app.post('/api/auth/forgot',validate(z.object({email:z.string().trim().email().max(254).transform(s=>s.toLowerCase())})),asyncRoute(async(req,res)=>{
+ const generic={message:'If that email belongs to an active account, recovery instructions will be sent.'};
+ const user=await q('SELECT id,email FROM profiles WHERE lower(email)=lower($1) AND suspended=false',[req.body.email]);if(!user.rowCount)return res.json(generic);
+ const token=randomBytes(32).toString('base64url'),tokenHash=hash(token);
+ await q('UPDATE password_reset_tokens SET used_at=now() WHERE user_id=$1 AND used_at IS NULL',[user.rows[0].id]);
+ await q("INSERT INTO password_reset_tokens(user_id,token_hash,expires_at) VALUES($1,$2,now()+interval '30 minutes')",[user.rows[0].id,tokenHash]);
+ const origin=(process.env.APP_ORIGIN||'').split(',')[0].trim()||'';
+ if(!process.env.RESEND_API_KEY||!process.env.RESEND_FROM_EMAIL||!origin){console.warn('SCIOP recovery token created, but email delivery is not configured. Set RESEND_API_KEY, RESEND_FROM_EMAIL and APP_ORIGIN.');return res.json(generic)}
+ const url=origin.replace(/\/$/,'')+'/app.html?reset_token='+encodeURIComponent(token);
+ const sent=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+process.env.RESEND_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({from:process.env.RESEND_FROM_EMAIL,to:[user.rows[0].email],subject:'Reset your SCIOP password',html:'<p>A password reset was requested for your SCIOP account.</p><p><a href="'+url+'">Reset password</a></p><p>This link expires in 30 minutes. If you did not request it, ignore this email.</p>'})});
+ if(!sent.ok){console.error('SCIOP recovery email provider returned HTTP '+sent.status);return res.status(502).json({error:'The recovery email could not be sent. Please try again later.'})}
+ res.json(generic);
+}));
+app.post('/api/auth/reset',validate(z.object({token:z.string().min(32).max(200),password:z.string().min(10).max(128)})),asyncRoute(async(req,res)=>{
+ const tokenHash=hash(req.body.token);const r=await q('SELECT id,user_id FROM password_reset_tokens WHERE token_hash=$1 AND used_at IS NULL AND expires_at>now()',[tokenHash]);if(!r.rowCount)return res.status(400).json({error:'This recovery link is invalid or expired. Request a new one.'});
+ const password_hash=await bcrypt.hash(req.body.password,12);const client=await pool.connect();try{await client.query('BEGIN');await client.query('UPDATE profiles SET password_hash=$2,updated_at=now() WHERE id=$1',[r.rows[0].user_id,password_hash]);await client.query('UPDATE password_reset_tokens SET used_at=now() WHERE id=$1',[r.rows[0].id]);await client.query('DELETE FROM sessions WHERE user_id=$1',[r.rows[0].user_id]);await client.query('COMMIT')}catch(err){await client.query('ROLLBACK');throw err}finally{client.release()}
+ res.json({message:'Password updated. Sign in with your new password.'});
+}));
 app.patch('/api/profile',auth,validate(z.object({
  full_name:text(100).optional(),bio:z.string().max(1600).optional(),location:z.string().max(160).optional(),
  domains:arrayText,skills:arrayText,interests:arrayText,experience:z.string().max(4000).optional(),
@@ -163,7 +181,7 @@ app.post('/api/posts/:id/react',auth,asyncRoute(async(req,res)=>{
  const count=await q('SELECT count(*)::int AS n FROM reactions WHERE post_id=$1',[req.params.id]);res.json({liked:!exists.rowCount,count:count.rows[0].n});
 }));
 app.post('/api/reports',auth,validate(z.object({item_type:z.enum(['post','profile','opportunity','project','idea','community','message']),item_id:uuid,reason:text(1000)})),asyncRoute(async(req,res)=>{const b=req.body;const r=await q('INSERT INTO reports(reporter_id,item_type,item_id,reason) VALUES($1,$2,$3,$4) RETURNING id,status,created_at',[req.user.id,b.item_type,b.item_id,b.reason]);res.status(201).json({report:r.rows[0]});}));
-app.get('/api/posts/:id/comments',auth,asyncRoute(async(req,res)=>{
+app.post('/api/posts/:id/poll-vote',auth,validate(z.object({option:text(160)})),asyncRoute(async(req,res)=>{\n const p=await q(\"SELECT id,poll_options FROM posts WHERE id=$1 AND post_type='poll'\",[req.params.id]);if(!p.rowCount)return res.status(404).json({error:'Poll not found.'});const options=p.rows[0].poll_options||[];if(!options.includes(req.body.option))return res.status(400).json({error:'Choose one of the listed options.'});await q('INSERT INTO poll_votes(post_id,user_id,option) VALUES($1,$2,$3) ON CONFLICT(post_id,user_id) DO UPDATE SET option=EXCLUDED.option,created_at=now()',[req.params.id,req.user.id,req.body.option]);const votes=await q('SELECT option,count(*)::int AS count FROM poll_votes WHERE post_id=$1 GROUP BY option',[req.params.id]);const mine=await q('SELECT option FROM poll_votes WHERE post_id=$1 AND user_id=$2',[req.params.id,req.user.id]);res.json({votes:votes.rows,my_vote:mine.rows[0]?.option||null});\n}));\napp.get('/api/posts/:id/comments',auth,asyncRoute(async(req,res)=>{
  const r=await q(`SELECT c.*,p.full_name,p.username,p.avatar_url FROM comments c JOIN profiles p ON p.id=c.author_id WHERE c.post_id=$1 ORDER BY c.created_at ASC LIMIT 250',[req.params.id]);res.json({items:r.rows});
 }));
 app.post('/api/posts/:id/comments',auth,validate(z.object({body:text(2000),parent_id:uuid.optional()})),asyncRoute(async(req,res)=>{
