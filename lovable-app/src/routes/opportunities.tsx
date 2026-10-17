@@ -1,3 +1,2 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { SCIOPPathPage } from './$path'
-export const Route=createFileRoute('/opportunities')({component:()=> <SCIOPPathPage path="opportunities"/>})
+import { createFileRoute, Outlet } from '@tanstack/react-router'
+export const Route=createFileRoute('/opportunities')({component:Outlet})
