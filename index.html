@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101b35">
+<title>SCIOP — SCI Open Innovation Platform</title>
+<meta name="description" content="Connect people, skills, ideas, projects, businesses and opportunities across domains through SCIOP — SCI Open Innovation Platform.">
+<style>
+:root{--navy:#101b35;--blue:#3459e6;--mint:#bdf6df;--ink:#16213b;--muted:#69758d;--paper:#f5f7fb;--line:#e3e8f1;--white:#fff;--shadow:0 18px 55px rgba(16,27,53,.10)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--paper);line-height:1.55}a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit}.wrap{width:min(1160px,calc(100% - 40px));margin:auto}.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:11px;font-weight:850;letter-spacing:.02em}.mark{height:41px;width:41px;border-radius:14px;display:grid;place-items:center;background:var(--mint);color:var(--navy);font-weight:950;font-size:19px;box-shadow:inset 0 0 0 1px rgba(16,27,53,.08)}.brand small{display:block;font-weight:600;color:var(--muted);letter-spacing:.08em;font-size:10px}.nav{display:flex;align-items:center;gap:27px;font-weight:650;font-size:13px;color:#44506a}.nav a:hover{color:var(--blue)}.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:0;border-radius:999px;padding:13px 20px;background:var(--blue);color:white;font-weight:750;font-size:14px;cursor:pointer;transition:transform .2s,box-shadow .2s}.btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(52,89,230,.25)}.btn.light{background:white;color:var(--navy)}.btn.outline{background:transparent;border:1px solid #ced7e9;color:var(--navy)}.hero{background:var(--navy);color:white;border-radius:30px;overflow:hidden;position:relative;margin-bottom:68px}.hero:before{content:"";position:absolute;width:560px;height:560px;border-radius:50%;right:-80px;top:-180px;background:radial-gradient(circle at 35% 35%,rgba(189,246,223,.22),rgba(52,89,230,.18) 46%,transparent 70%);pointer-events:none}.hero-inner{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center;padding:70px 65px 68px}.eyebrow{font-size:11px;font-weight:850;letter-spacing:.18em;text-transform:uppercase;color:#91e9c8;display:flex;align-items:center;gap:10px}.eyebrow:before{content:"";height:2px;width:27px;background:#91e9c8}.hero h1{font-size:clamp(42px,5.3vw,70px);line-height:1.02;letter-spacing:-.055em;margin:20px 0 22px;max-width:650px}.hero h1 span{color:var(--mint)}.hero p{font-size:17px;color:#c4cce0;max-width:530px;margin:0 0 28px}.hero-actions{display:flex;flex-wrap:wrap;gap:12px}.trustline{font-size:12px;color:#aeb9d1;margin-top:22px}.visual{min-height:370px;position:relative;display:grid;place-items:center}.orb{width:260px;height:260px;border-radius:50%;border:1px solid rgba(189,246,223,.5);display:grid;place-items:center;position:relative;background:radial-gradient(circle,rgba(189,246,223,.18),rgba(52,89,230,.08) 55%,transparent 70%);box-shadow:0 0 100px rgba(189,246,223,.09)}.orb:before,.orb:after{content:"";position:absolute;border:1px solid rgba(189,246,223,.25);border-radius:50%;inset:-34px}.orb:after{inset:-68px;border-color:rgba(189,246,223,.13)}.orb-core{height:112px;width:112px;border-radius:33px;background:var(--mint);color:var(--navy);display:grid;place-items:center;font-size:40px;font-weight:950;transform:rotate(-8deg);box-shadow:0 14px 45px rgba(189,246,223,.2)}.chip{position:absolute;padding:10px 14px;background:#fff;color:#1b2742;border-radius:14px;font-size:12px;font-weight:800;box-shadow:var(--shadow);white-space:nowrap}.chip b{color:var(--blue);margin-right:6px}.c1{top:40px;left:10px}.c2{top:93px;right:0}.c3{bottom:54px;left:0}.c4{bottom:12px;right:24px}.section{padding:0 0 74px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:25px}.kicker{font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:850;color:var(--blue)}h2{font-size:clamp(28px,3vw,40px);line-height:1.12;letter-spacing:-.04em;margin:9px 0 0}.section-head p{max-width:430px;color:var(--muted);font-size:14px;margin:0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.feature{background:white;border:1px solid var(--line);border-radius:22px;padding:25px;min-height:210px;box-shadow:0 5px 20px rgba(16,27,53,.025)}.iconbox{height:46px;width:46px;border-radius:15px;display:grid;place-items:center;font-size:22px;background:#eef2ff;margin-bottom:20px}.feature:nth-child(2) .iconbox{background:#e5fbf2}.feature:nth-child(3) .iconbox{background:#fff1db}.feature h3{font-size:17px;margin:0 0 7px;letter-spacing:-.02em}.feature p{font-size:13px;color:var(--muted);margin:0}.domain-list{display:flex;flex-wrap:wrap;gap:10px}.domain{background:white;border:1px solid var(--line);border-radius:999px;padding:10px 15px;font-size:13px;font-weight:650;color:#45516b}.domain span{margin-right:8px}.band{background:#e9f7f1;border-radius:26px;padding:36px;display:grid;grid-template-columns:1.1fr .9fr;gap:25px;align-items:center;margin-bottom:72px}.band h2{font-size:32px}.band p{color:#53627a;font-size:14px;margin:12px 0 0}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.step{background:rgba(255,255,255,.8);border:1px solid rgba(16,27,53,.08);border-radius:16px;padding:16px}.step strong{display:block;font-size:12px}.step small{color:var(--muted);font-size:11px}.step em{font-style:normal;color:var(--blue);font-weight:900;font-size:11px;display:block;margin-bottom:9px}.join{background:white;border:1px solid var(--line);border-radius:28px;padding:38px;display:grid;grid-template-columns:.78fr 1.22fr;gap:38px;box-shadow:var(--shadow)}.join-copy{background:var(--navy);color:white;border-radius:22px;padding:28px;align-self:stretch}.join-copy h2{font-size:32px}.join-copy p{color:#c0c9dc;font-size:14px}.join-copy ul{padding-left:18px;color:#dae1ef;font-size:13px}.join-copy li{margin:10px 0}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:800;color:#44506a}.field input,.field select,.field textarea{width:100%;border:1px solid #dbe2ee;background:#fbfcfe;border-radius:12px;padding:12px 13px;outline:none;color:var(--ink)}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(52,89,230,.1)}.field textarea{resize:vertical;min-height:85px}.form-note{font-size:11px;color:var(--muted);margin:10px 0 0}.notice{display:none;padding:13px;border-radius:12px;background:#e5fbf2;color:#165b43;font-size:13px;margin-top:13px}.footer{padding:35px 0 28px;margin-top:50px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:18px;color:var(--muted);font-size:12px}.footer b{color:var(--ink)}.mobile-menu{display:none}
+@media(max-width:850px){.nav{gap:14px}.nav a:not(.btn){display:none}.hero-inner{grid-template-columns:1fr;padding:45px 32px 36px}.visual{min-height:300px}.hero{margin-bottom:50px}.section-head{display:block}.section-head p{margin-top:12px}.grid{grid-template-columns:1fr 1fr}.band{grid-template-columns:1fr;padding:27px}.join{grid-template-columns:1fr;padding:20px}.join-copy{padding:23px}.steps{grid-template-columns:repeat(4,1fr)}}@media(max-width:560px){.wrap{width:min(100% - 24px,1160px)}.topbar{height:68px}.brand small{font-size:9px}.nav .btn{padding:10px 13px;font-size:12px}.hero-inner{padding:37px 23px 25px}.hero h1{font-size:43px}.hero p{font-size:15px}.visual{min-height:275px;transform:scale(.88);margin:-5px -20px}.grid{grid-template-columns:1fr}.feature{min-height:auto}.section{padding-bottom:52px}.steps{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.join{padding:12px}.band h2{font-size:27px}.footer{align-items:flex-start;flex-direction:column}.section-head h2{font-size:31px}}
+</style>
+</head>
+<body>
+<header class="wrap topbar">
+  <a class="brand" href="#" aria-label="SCIOP home"><span class="mark">S.</span><span>SCIOP<small>SCI OPEN INNOVATION PLATFORM</small></span></a>
+  <nav class="nav" aria-label="Main navigation"><a href="#platform">Platform</a><a href="#domains">Domains</a><a href="#how">How it works</a><a class="btn" href="#join">Join SCIOP ↗</a></nav>
+</header>
+<main class="wrap">
+<section class="hero">
+ <div class="hero-inner">
+  <div>
+   <div class="eyebrow">Open doors. Shared progress.</div>
+   <h1>Good things happen when we <span>connect.</span></h1>
+   <p>SCIOP brings people, skills, ideas, projects and opportunities into one open network—so the right people can find each other and build something meaningful.</p>
+   <div class="hero-actions"><a class="btn light" href="#join">Join the network <span>↗</span></a><a class="btn outline" style="color:white;border-color:#53617d" href="#platform">Explore SCIOP ↓</a></div>
+   <div class="trustline">By the people, for the people · Cross-domain by design</div>
+  </div>
+  <div class="visual" aria-label="A connected ecosystem of ideas and people">
+   <div class="orb"><div class="orb-core">S</div></div>
+   <div class="chip c1"><b>✦</b> Ideas</div><div class="chip c2"><b>↗</b> Opportunities</div><div class="chip c3"><b>◎</b> People & skills</div><div class="chip c4"><b>⌘</b> Projects</div>
+  </div>
+ </div>
+</section>
+<section class="section" id="platform">
+ <div class="section-head"><div><div class="kicker">What can you do here?</div><h2>Make your next connection count.</h2></div><p>Whether you are starting out, growing a business, building a product or exploring a new idea, find a path to participate.</p></div>
+ <div class="grid">
+  <article class="feature"><div class="iconbox">⌕</div><h3>Find opportunities</h3><p>Discover potential work, internships, projects, clients, collaborators and professional connections.</p></article>
+  <article class="feature"><div class="iconbox">↗</div><h3>Share what you can do</h3><p>Showcase your expertise, skills, services, ideas, research or resources for others to discover.</p></article>
+  <article class="feature"><div class="iconbox">✳</div><h3>Build together</h3><p>Connect with co-founders, teams, mentors, technical experts and partners across disciplines.</p></article>
+  <article class="feature"><div class="iconbox">⌘</div><h3>Bring a project</h3><p>Explain a challenge or opportunity and invite capable people to explore it with you.</p></article>
+  <article class="feature"><div class="iconbox">◎</div><h3>Cross-domain network</h3><p>Meet people beyond your own sector and discover useful combinations of skills and ideas.</p></article>
+  <article class="feature"><div class="iconbox">↗</div><h3>Grow your initiative</h3><p>Find feedback, expertise and potential partnerships for a startup, research effort or business.</p></article>
+ </div>
+</section>
+<section class="section" id="domains">
+ <div class="section-head"><div><div class="kicker">Many fields. One network.</div><h2>Ideas don't stay in one box.</h2></div><p>SCIOP welcomes people across disciplines. Start with your main field and connect wherever collaboration makes sense.</p></div>
+ <div class="domain-list">
+ <div class="domain"><span>⌘</span>AI & Software</div><div class="domain"><span>⌂</span>Architecture & Construction</div><div class="domain"><span>⚙</span>Engineering & Manufacturing</div><div class="domain"><span>⌬</span>Science & Research</div><div class="domain"><span>⚡</span>Energy & Sustainability</div><div class="domain"><span>▣</span>Education & Learning</div><div class="domain"><span>↗</span>Startups & Business</div><div class="domain"><span>✳</span>Design & Creative</div><div class="domain"><span>＋</span>Health & Biotech</div><div class="domain"><span>◎</span>Public & Social Impact</div><div class="domain"><span>◇</span>EV & Mobility</div><div class="domain"><span>⋯</span>And many more</div>
+ </div>
+</section>
+<section class="band" id="how">
+ <div><div class="kicker">How SCIOP works</div><h2>Start with a connection.<br>See where it leads.</h2><p>Tell the network who you are, what you can contribute and what you want to explore. Use the details to start conversations and find a fit.</p></div>
+ <div class="steps"><div class="step"><em>01</em><strong>Connect</strong><small>Introduce yourself</small></div><div class="step"><em>02</em><strong>Share</strong><small>Skills or needs</small></div><div class="step"><em>03</em><strong>Find</strong><small>Explore a match</small></div><div class="step"><em>04</em><strong>Collaborate</strong><small>Make progress</small></div></div>
+</section>
+<section class="section" id="join">
+ <div class="join">
+  <aside class="join-copy"><div class="eyebrow">Get connected</div><h2>There is a place for your skills and ideas.</h2><p>Share a few details to introduce yourself to the SCIOP network.</p><ul><li>Find people with complementary skills</li><li>Explore projects and professional opportunities</li><li>Offer expertise, services or an idea</li><li>Find partners for cross-domain collaboration</li></ul><p style="font-size:11px;color:#aeb9d1">SCIOP — SCI Open Innovation Platform</p></aside>
+  <div>
+   <form id="joinForm">
+    <div class="formgrid">
+     <div class="field"><label for="name">Full name *</label><input id="name" name="name" autocomplete="name" required placeholder="Your name"></div>
+     <div class="field"><label for="email">Email address *</label><input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com"></div>
+     <div class="field"><label for="identity">I am a *</label><select id="identity" name="identity" required><option value="">Choose one</option><option>Student</option><option>Research Scholar</option><option>Professor / Educator</option><option>Working Professional</option><option>Freelancer / Consultant</option><option>Entrepreneur / Founder</option><option>Startup</option><option>Business Owner</option><option>Company / Organization</option><option>Researcher / Scientist</option><option>Engineer / Technical Expert</option><option>Artist / Creator</option><option>Investor</option><option>Mentor</option><option>Job Seeker</option><option>Other</option></select></div>
+     <div class="field"><label for="domain">Primary domain *</label><select id="domain" name="domain" required><option value="">Choose your field</option><option>AI / Machine Learning</option><option>IT / Software</option><option>Engineering</option><option>Architecture / Construction</option><option>Infrastructure / Urban Development</option><option>Manufacturing / Industrial Technology</option><option>Science / Research</option><option>Mining / Critical Minerals</option><option>Energy / Renewables</option><option>EV / Mobility</option><option>Education / Training</option><option>Healthcare / Biotech</option><option>Agriculture / Food Technology</option><option>Finance / FinTech</option><option>Legal Services</option><option>Business / Management</option><option>Startups / Entrepreneurship</option><option>Marketing / Advertising</option><option>Media / Entertainment</option><option>Design / Creative Arts</option><option>Environment / Sustainability</option><option>Real Estate</option><option>Logistics / Transport</option><option>Public Services</option><option>Social Impact</option><option>Defence / Aerospace</option><option>Other</option></select></div>
+     <div class="field"><label for="goal">What are you looking for? *</label><select id="goal" name="goal" required><option value="">Choose your goal</option><option>Job / Employment</option><option>Internship</option><option>Freelance Work</option><option>Clients / Business Leads</option><option>Projects</option><option>Co-founder / Business Partner</option><option>Investor / Funding</option><option>Mentor / Advisor</option><option>Technical Expert</option><option>Research Collaborator</option><option>Vendor / Supplier</option><option>Team Members / Talent</option><option>Learning / Networking</option><option>Share an Idea</option><option>Other</option></select></div>
+     <div class="field"><label for="contribute">What can you contribute?</label><select id="contribute" name="contribute"><option value="">Choose one</option><option>Skills / Expertise</option><option>Ideas / Innovation</option><option>Project / Business Opportunity</option><option>Products / Services</option><option>Technology / Tools</option><option>Research / Knowledge</option><option>Funding / Investment</option><option>Mentorship</option><option>Professional Network</option><option>Other</option></select></div>
+     <div class="field full"><label for="details">A little about your skills, idea or requirement</label><textarea id="details" name="details" placeholder="What are you working on, looking for, or hoping to contribute?"></textarea></div>
+     <div class="field full"><label for="link">LinkedIn, portfolio or website (optional)</label><input id="link" name="link" type="url" placeholder="https://"></div>
+     <div class="field full"><button class="btn" type="submit">Prepare my introduction ↗</button><div class="form-note">This starter version prepares an introduction for you to copy. It does not yet save your response to a database or send it to SCIOP.</div><div class="notice" id="notice" role="status"></div></div>
+    </div>
+   </form>
+  </div>
+ </div>
+</section>
+</main>
+<footer class="wrap footer"><div><b>SCIOP</b> — SCI Open Innovation Platform<br>By the people, for the people.</div><div>Built around people, ideas and collaboration.</div><div>© <span id="year"></span> SCIOP</div></footer>
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+document.getElementById('joinForm').addEventListener('submit',function(e){
+ e.preventDefault();
+ const f=new FormData(this);
+ const message=[
+ 'SCIOP — SCI OPEN INNOVATION PLATFORM',
+ 'Name: '+f.get('name'),
+ 'Email: '+f.get('email'),
+ 'Identity: '+f.get('identity'),
+ 'Primary domain: '+f.get('domain'),
+ 'Looking for: '+f.get('goal'),
+ 'Can contribute: '+(f.get('contribute')||'Not specified'),
+ 'About: '+(f.get('details')||'Not provided'),
+ 'Profile: '+(f.get('link')||'Not provided')
+ ].join('\n');
+ const n=document.getElementById('notice');
+ n.style.display='block';
+ n.textContent='Your introduction is ready. Copy it below and send it through your preferred contact channel.';
+ const pre=document.createElement('textarea');
+ pre.readOnly=true;pre.value=message;pre.style.cssText='width:100%;min-height:180px;padding:12px;margin-top:10px;border:1px solid #cbd5e1;border-radius:10px;display:block';
+ const copy=document.createElement('button');
+ copy.type='button';copy.className='btn';copy.style.marginTop='10px';copy.textContent='Copy introduction';
+ copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(message);copy.textContent='Copied ✓'}catch(err){pre.select();document.execCommand('copy');copy.textContent='Copied ✓'}});
+ n.appendChild(pre);n.appendChild(copy);
+ n.scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+</script>
+</body>
+</html>
