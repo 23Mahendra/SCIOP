@@ -20,7 +20,7 @@ function PathPage() {
 }
 
 export function SCIOPPathPage({ path }: { path: string }) {
-  const { user, ready } = useSession()
+  const { user } = useSession()
   const { data, isPending, error, refetch } = useWorkspace()
   const commit = useCommit()
   const queryClient = useQueryClient()
@@ -97,7 +97,7 @@ export function SCIOPPathPage({ path }: { path: string }) {
     if (!user) return <Shell><Empty title="Sign in to view notifications" action={<Button asChild><Link to="/auth">Sign in</Link></Button>}/></Shell>
     const notifications=data?.notifications??[]
     const markRead=async(id:string)=>{await commit(supabase.from('notifications').update({is_read:true}).eq('id',id).eq('user_id',user.id),'Notification marked read')}
-    return <Shell><PageHeading eyebrow="YOUR ACTIVITY" title="Notifications" description="Updates about your connections and collaboration." action={<Button variant="outline" onClick={()=>commit(supabase.from('notifications').update({is_read:true}).eq('user_id',user.id),'All notifications marked read')}>Mark all read</Button>}/>{notifications.length?notifications.map(n=><article className={n.is_read?'record-card':'record-card notification-unread'} key={n.id}><Bell size={18}/><div className="record-card-main"><h3>{n.type.replace(/_/g,' ')}</h3><p>{n.body}</p><small>{new Date(n.created_at).toLocaleString()}</small></div>{!n.is_read&&<Button size="icon" variant="ghost" aria-label="Mark as read" onClick={()=>markRead(n.id)}><Check/></Button>}</article>):<Empty title="You’re all caught up" description="New activity will appear here."/ >}</Shell>
+    return <Shell><PageHeading eyebrow="YOUR ACTIVITY" title="Notifications" description="Updates about your connections and collaboration." action={<Button variant="outline" onClick={()=>commit(supabase.from('notifications').update({is_read:true}).eq('user_id',user.id),'All notifications marked read')}>Mark all read</Button>}/>{notifications.length?notifications.map(n=><article className={n.is_read?'record-card':'record-card notification-unread'} key={n.id}><Bell size={18}/><div className="record-card-main"><h3>{n.type.replace(/_/g,' ')}</h3><p>{n.body}</p><small>{new Date(n.created_at).toLocaleString()}</small></div>{!n.is_read&&<Button size="icon" variant="ghost" aria-label="Mark as read" onClick={()=>markRead(n.id)}><Check/></Button>}</article>):<Empty title="You’re all caught up" description="New activity will appear here." />}</Shell>
   }
 
   if (normalized === 'connections') {
