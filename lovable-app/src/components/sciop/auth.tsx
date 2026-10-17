@@ -7,7 +7,7 @@ import { supabase } from '@/integrations/supabase/client'
 import { lovable } from '@/integrations/lovable'
 import { useSession } from './session'
 import { toast } from 'sonner'
-import lab from '@/assets/innovation-lab.jpg'
+import lab from '@/assets/innovation-lab.svg'
 export function AuthPage({reset=false}:{reset?:boolean}){
  const [mode,setMode]=useState<'login'|'signup'|'forgot'>('login');const [busy,setBusy]=useState(false);const [notice,setNotice]=useState('');const [show,setShow]=useState(false);const [recovery,setRecovery]=useState(false);const navigate=useNavigate();const {user}=useSession()
  useEffect(()=>{if(reset)setRecovery(window.location.hash.includes('type=recovery')||window.location.search.includes('type=recovery'));else if(user)navigate({to:'/profile'})},[user,reset,navigate])
