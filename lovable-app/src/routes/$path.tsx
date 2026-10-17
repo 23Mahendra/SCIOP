@@ -25,7 +25,7 @@ export function SCIOPPathPage({ path }: { path: string }) {
   const commit = useCommit()
   const queryClient = useQueryClient()
   const [query, setQuery] = useState('')
-  const [selectedConversation, setSelectedConversation] = useState<string | null>(null)
+  const [selectedConversation, setSelectedConversation] = useState<string | null>(() => typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('conversation') : null)
 
   useEffect(() => {
     if (!selectedConversation && data?.conversations.length) setSelectedConversation(data.conversations[0].id)
