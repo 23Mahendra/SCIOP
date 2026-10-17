@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { useEffect, useState, type FormEvent } from 'react'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowUpRight, Bell, Check, MessageCircle, Search, ShieldCheck, UserPlus, Users } from 'lucide-react'
+import { ArrowUpRight, Bell, Check, Search, ShieldCheck, UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Shell, PageHeading, Empty, Avatar, Tags } from '@/components/sciop/shell'
 import { AuthPage } from '@/components/sciop/auth'
 import { HomePage } from '@/components/sciop/feed'
-import { RecordList, RecordDetail, type RecordKind } from '@/components/sciop/records'
+import { RecordList, type RecordKind } from '@/components/sciop/records'
 import { useSession, useWorkspace } from '@/components/sciop/session'
 import { useCommit } from '@/components/sciop/actions'
 import { supabase } from '@/integrations/supabase/client'
@@ -118,5 +118,5 @@ function AdminPanel(){
  const commit=useCommit()
  if(isPending)return <p>Loading reports…</p>
  if(error)return <div><p>Unable to load reports. Check staff RLS permissions.</p><Button onClick={()=>refetch()}>Retry</Button></div>
- return reports.length?<div className="content-section">{reports.map((r:any)=><article className="record-card" key={r.id}><ShieldCheck size={18}/><div className="record-card-main"><h3>{r.item_type} · {r.reason||'No reason supplied'}</h3><p>Report ID: {r.id}</p><small>{new Date(r.created_at).toLocaleString()} · Status: {r.status}</small></div>{r.status!=='resolved'&&<Button variant="outline" onClick={()=>commit(supabase.from('reports').update({status:'resolved'}).eq('id',r.id),'Report marked resolved')}>Resolve</Button>}</article>)}</div>:<Empty title="No reports to review" description="New reports will appear here."/>
+ return reports.length?<div className="content-section">{reports.map(r=><article className="record-card" key={r.id}><ShieldCheck size={18}/><div className="record-card-main"><h3>{r.item_type} · {r.reason||'No reason supplied'}</h3><p>Report ID: {r.id}</p><small>{new Date(r.created_at).toLocaleString()} · Status: {r.status}</small></div>{r.status!=='resolved'&&<Button variant="outline" onClick={()=>commit(supabase.from('reports').update({status:'resolved'}).eq('id',r.id),'Report marked resolved')}>Resolve</Button>}</article>)}</div>:<Empty title="No reports to review" description="New reports will appear here."/>
 }
