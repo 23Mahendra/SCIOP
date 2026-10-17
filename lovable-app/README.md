@@ -1,29 +1,27 @@
-# Welcome to your Lovable project
+# SCIOP Connect — Lovable source
 
-This project was built with [Lovable](https://lovable.dev).
+This folder contains the React/TanStack Start source exported from the existing Lovable SCIOP Connect project.
 
-## Build with Lovable
+## Local development
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Requirements: Bun compatible with `bun.lock`, Node.js 22+.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+cp .env.example .env
+# Set SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY, and their VITE_ equivalents.
+bun install --frozen-lockfile
+bun run dev
 ```
 
-## Built with
+## Scripts
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+- `bun run dev` — local development server
+- `bun run build` — production build
+- `bun run test` — Vitest test suite
+- `bun run lint` — ESLint
+
+## Backend requirements
+
+The app expects a Supabase project matching `src/integrations/supabase/types.ts`. A Drizzle migration is included under `drizzle/migrations/`; validate it against a disposable database before applying it to any real project. OAuth providers, storage, RLS, password recovery and staff roles require configuration in the target Supabase project.
+
+This is a manual source import; native Lovable GitHub sync is not connected. The source `.env` is excluded. See the root `MIGRATION_STATUS.md` for remaining verification notes.
