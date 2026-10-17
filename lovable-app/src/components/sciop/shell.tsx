@@ -1,0 +1,36 @@
+import { useState, type ReactNode } from 'react'
+import { Link, useLocation, useNavigate } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
+import { Home, Compass, Users, BriefcaseBusiness, Layers3, Lightbulb, Globe2, MessageSquare, Bell, Settings, ShieldCheck, ArrowUpRight, Search, Plus, Menu, X, LogOut, Bookmark, ChevronRight, Network } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { supabase } from '@/integrations/supabase/client'
+import { useSession, useWorkspace, useRealtime } from './session'
+import { toast } from 'sonner'
+export const navigation=[{to:'/',label:'Home',icon:Home},{to:'/explore',label:'Explore',icon:Compass},{to:'/people',label:'People',icon:Users},{to:'/opportunities',label:'Opportunities',icon:BriefcaseBusiness},{to:'/projects',label:'Projects',icon:Layers3},{to:'/ideas',label:'Ideas',icon:Lightbulb},{to:'/communities',label:'Communities',icon:Globe2},{to:'/messages',label:'Messages',icon:MessageSquare}] as const
+export function Avatar({name,url,size='normal'}:{name:string;url?:string|null;size?:'normal'|'large'|'small'}){return <span className={`person-avatar ${size}`} aria-label={name}>{url?<img src={url} alt={name}/>:name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()||'S'}</span>}
+export function Shell({children}:{children:ReactNode}){
+ const {user}=useSession();const {data}=useWorkspace();const profile=data?.profiles.find(p=>p.id===user?.id);const [open,setOpen]=useState(false);const [search,setSearch]=useState('');const location=useLocation();const navigate=useNavigate();const qc=useQueryClient();useRealtime()
+ const staff=data?.roles.some(r=>['admin','moderator'].includes(r.role));const unread=data?.notifications.filter(n=>!n.is_read).length??0
+ async function logout(){await qc.cancelQueries();qc.clear();const {error}=await supabase.auth.signOut();if(error){toast.error(error.message);return}navigate({to:'/auth',replace:true})}
+ return <div className="app-shell">
+ <aside className={`sidebar ${open?'is-open':''}`}>
+ <Link to="/" className="brand" onClick={()=>setOpen(false)}><span className="brand-symbol"><Network size={26}/></span><span>SCIOP<span className="brand-caption">OPEN INNOVATION</span></span></Link>
+ <div className="sidebar-label">YOUR ECOSYSTEM</div>
+ <nav aria-label="Main navigation">{navigation.map(({to,label,icon:Icon})=><Link key={to} to={to} onClick={()=>setOpen(false)} className={`nav-item ${location.pathname===to?'active':''}`}><Icon size={19}/><span>{label}</span>{label==='Messages'&&data?.notifications.some(n=>n.type==='message'&&!n.is_read)&&<span className="nav-dot"/>}</Link>)}</nav>
+ <div className="sidebar-divider"/>
+ <nav aria-label="Account navigation"><Link to="/saved" className={`nav-item ${location.pathname==='/saved'?'active':''}`}><Bookmark size={19}/>Saved items</Link><Link to="/settings" className="nav-item"><Settings size={19}/>Settings</Link>{staff&&<Link to="/admin" className="nav-item"><ShieldCheck size={19}/>Admin review</Link>}</nav>
+ <div className="sidebar-bottom"><div className="network-invite"><span className="eyebrow">BETTER, TOGETHER</span><p>Your next breakthrough<br/>starts with a connection.</p><Button asChild variant="outline" className="w-full"><Link to="/people">Find your people <ArrowUpRight/></Link></Button></div>
+ {user?<div className="account-row"><Link to="/profile" className="account-link"><Avatar name={profile?.full_name||user.email?.split('@')[0]||'Member'} url={profile?.avatar_url}/><span><strong>{profile?.full_name||'Your profile'}</strong><small>{profile?.account_type||'Member'}</small></span></Link><Button size="icon" variant="ghost" title="Sign out" aria-label="Sign out" onClick={logout}><LogOut/></Button></div>:<Button asChild className="w-full"><Link to="/auth">Join SCIOP <ArrowUpRight/></Link></Button>}
+ <p className="sidebar-footnote">© 2026 SCIOP · Connected possibilities</p></div>
+ </aside>
+ {open&&<div className="mobile-scrim" onClick={()=>setOpen(false)}/>}
+ <div className="main-shell"><header className="topbar"><Button className="mobile-menu" variant="ghost" size="icon" aria-label={open?'Close menu':'Open menu'} onClick={()=>setOpen(!open)}>{open?<X/>:<Menu/>}</Button><span className="topbar-title">The world moves forward. <span>Together.</span></span><form className="global-search" onSubmit={e=>{e.preventDefault();navigate({to:'/explore',search:{q:search}})}}><Search size={17}/><input aria-label="Search SCIOP" placeholder="Search people, ideas, opportunities..." value={search} onChange={e=>setSearch(e.target.value)}/><kbd>↵</kbd></form><Button variant="ghost" size="icon" asChild title="Notifications"><Link to="/notifications" aria-label="Notifications" className="notification-icon"><Bell/>{unread>0&&<i/>}</Link></Button>{user?<Link to="/profile"><Avatar name={profile?.full_name||'You'} url={profile?.avatar_url} size="small"/></Link>:<Button variant="outline" asChild><Link to="/auth">Sign in</Link></Button>}</header>
+ <main className="page-wrap">{children}</main><footer className="app-footer"><span>SCI OPEN INNOVATION PLATFORM</span><span>People. Possibilities. Progress.</span></footer></div>
+ <nav className="mobile-bottom" aria-label="Mobile navigation">{navigation.slice(0,3).map(({to,label,icon:Icon})=><Link key={to} to={to} className={location.pathname===to?'active':''}><Icon size={20}/><span>{label}</span></Link>)}<Link to="/messages"><MessageSquare size={20}/><span>Messages</span></Link><Link to="/profile"><Users size={20}/><span>Profile</span></Link></nav>
+ </div>
+}
+export function PageHeading({eyebrow,title,description,action}:{eyebrow:string;title:string;description:string;action?:ReactNode}){return <div className="page-heading"><div><span className="eyebrow">{eyebrow}</span><h1>{title}</h1><p>{description}</p></div>{action}</div>}
+export function Empty({title='Nothing here yet',description='New possibilities will appear here.',action}:{title?:string;description?:string;action?:ReactNode}){return <div className="empty-state"><Network size={30}/><h3>{title}</h3><p>{description}</p>{action}</div>}
+export function DataState({children}:{children:ReactNode}){const {user,ready}=useSession();const query=useWorkspace();if(!ready)return <div className="loading-state">Opening your ecosystem…</div>;if(!user)return <Empty title="Your innovation ecosystem awaits" description="Join the people turning possibility into progress." action={<Button asChild><Link to="/auth">Join SCIOP <ArrowUpRight/></Link></Button>}/>;if(query.isPending)return <div className="loading-state">Connecting to your ecosystem…</div>;if(query.error)return <div className="connection-error"><h3>We couldn’t connect to your data</h3><p>Lovable Cloud is temporarily unavailable. Your changes have not been lost.</p><Button variant="outline" onClick={()=>query.refetch()}>Try again</Button></div>;return <>{children}</>}
+export function Tags({items}:{items:string[]}){return <div className="tags">{items.map(t=><span key={t}>{t}</span>)}</div>}
+export { Plus, ChevronRight }
