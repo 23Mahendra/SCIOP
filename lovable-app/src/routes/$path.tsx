@@ -19,7 +19,7 @@ function PathPage() {
   return <SCIOPPathPage path={path} />
 }
 
-export function SCIOPPathPage({ path }: { path: string })
+export function SCIOPPathPage({ path }: { path: string }) {
   const { user, ready } = useSession()
   const { data, isPending, error, refetch } = useWorkspace()
   const commit = useCommit()
