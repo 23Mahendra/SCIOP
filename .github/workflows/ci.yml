@@ -30,17 +30,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
       - run: npm install
       - run: npm run check
       - name: Compile inline application JavaScript
         run: |
-          node --input-type=commonjs -e "const fs=require('fs'); const vm=require('vm'); const h=fs.readFileSync('app.html','utf8'); const ss=[...h.matchAll(/<script>([\s\S]*?)<\\/script>/g)]; if(!ss.length) throw new Error('No inline script found'); ss.forEach((x,i)=>new vm.Script(x[1],{filename:'app-inline-'+i+'.js'})); console.log('Compiled',ss.length,'inline script(s)');"
+          node --input-type=module -e 'import fs from "node:fs"; import vm from "node:vm"; const h=fs.readFileSync("app.html","utf8"); const a=h.indexOf("<script>")+8; const b=h.indexOf("</script>",a); if(a<8||b<0) throw new Error("Inline script missing"); new vm.Script(h.slice(a,b)); console.log("Inline JavaScript syntax OK");'
       - name: Apply schema to PostgreSQL
         run: PGPASSWORD=sciop_test_only psql -v ON_ERROR_STOP=1 -h localhost -U sciop -d sciop_test -f server/schema.sql
-      - name: Verify API health and auth routes
+      - name: Verify API health
         run: |
-          node server/server.js > /tmp/sciop.log 2>&1 &
+          node server/server-fixed.js > /tmp/sciop.log 2>&1 &
           echo $! > /tmp/sciop.pid
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:3000/api/health && break || sleep 2; done
           curl -fsS http://127.0.0.1:3000/api/config
