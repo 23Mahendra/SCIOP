@@ -18,6 +18,7 @@ bun run dev
 - `bun run dev` — local development server
 - `bun run build` — production build
 - `bun run test` — Vitest test suite
+- `bun run typecheck` — strict TypeScript check
 - `bun run lint` — ESLint
 
 ## Backend requirements
