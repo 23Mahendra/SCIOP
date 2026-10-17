@@ -5,11 +5,13 @@
   "description": "SCIOP — SCI Open Innovation Platform",
   "type": "module",
   "scripts": {
-    "start": "node server/server.js",
-    "dev": "node --watch server/server.js",
-    "check": "node --check server/server.js"
+    "start": "node server/server-fixed.js",
+    "dev": "node --watch server/server-fixed.js",
+    "check": "node --check server/server-fixed.js"
   },
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
