@@ -78,7 +78,8 @@ app.post('/api/auth/signup',validate(z.object({
  const existing=await q('SELECT 1 FROM profiles WHERE lower(email)=lower($1) OR lower(username)=lower($2)',[email,username]);
  if(existing.rowCount)return res.status(409).json({error:'That email or username is already registered.'});
  const password_hash=await bcrypt.hash(password,12);
- const p=await q(`INSERT INTO profiles(email,password_hash,full_name,username,role,account_type) VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,[email,password_hash,full_name,username,role,account_type]);
+ const assignedRole=(process.env.SCIOP_ADMIN_EMAIL && email===process.env.SCIOP_ADMIN_EMAIL.toLowerCase())?'admin':role;
+ const p=await q(`INSERT INTO profiles(email,password_hash,full_name,username,role,account_type) VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,[email,password_hash,full_name,username,assignedRole,account_type]);
  const raw=tokenFor(p.rows[0].id);await q('INSERT INTO sessions(user_id,token_hash,expires_at) VALUES($1,$2,now()+interval \'7 days\')',[p.rows[0].id,hash(raw)]);
  res.cookie('sciop_session',raw,tokenCookie).status(201).json({user:publicProfile(p.rows[0]),message:'Account created. Complete your profile to improve matches.'});
 }));
@@ -161,6 +162,7 @@ app.post('/api/posts/:id/react',auth,asyncRoute(async(req,res)=>{
  if(exists.rowCount)await q('DELETE FROM reactions WHERE user_id=$1 AND post_id=$2 AND reaction=\'like\'',[req.user.id,req.params.id]);else {const r=await q('INSERT INTO reactions(user_id,post_id) VALUES($1,$2) ON CONFLICT DO NOTHING RETURNING post_id',[req.user.id,req.params.id]);if(r.rowCount){const owner=await q('SELECT author_id FROM posts WHERE id=$1',[req.params.id]);if(owner.rowCount)await emitNotification(owner.rows[0].author_id,req.user.id,'reaction','post',req.params.id,`${req.user.full_name} liked your post`);}}
  const count=await q('SELECT count(*)::int AS n FROM reactions WHERE post_id=$1',[req.params.id]);res.json({liked:!exists.rowCount,count:count.rows[0].n});
 }));
+app.post('/api/reports',auth,validate(z.object({item_type:z.enum(['post','profile','opportunity','project','idea','community','message']),item_id:uuid,reason:text(1000)})),asyncRoute(async(req,res)=>{const b=req.body;const r=await q('INSERT INTO reports(reporter_id,item_type,item_id,reason) VALUES($1,$2,$3,$4) RETURNING id,status,created_at',[req.user.id,b.item_type,b.item_id,b.reason]);res.status(201).json({report:r.rows[0]});}));
 app.get('/api/posts/:id/comments',auth,asyncRoute(async(req,res)=>{
  const r=await q(`SELECT c.*,p.full_name,p.username,p.avatar_url FROM comments c JOIN profiles p ON p.id=c.author_id WHERE c.post_id=$1 ORDER BY c.created_at ASC LIMIT 250',[req.params.id]);res.json({items:r.rows});
 }));
@@ -225,7 +227,7 @@ app.post('/api/projects/:id/join',auth,validate(z.object({message:z.string().max
 app.get('/api/my/projects',auth,asyncRoute(async(req,res)=>{const r=await q(`SELECT p.*,m.member_role,m.status AS membership_status FROM project_members m JOIN projects p ON p.id=m.project_id WHERE m.user_id=$1 ORDER BY m.created_at DESC',[req.user.id]);res.json({items:r.rows});}));
 
 const ideaSchema=z.object({title:text(180),problem:text(3000),solution:z.string().max(4000).optional().default(''),domain:z.string().max(120).optional().default(''),stage:z.string().max(80).optional().default('concept'),ip_status:z.string().max(80).optional().default('undisclosed'),collaboration_needs:z.string().max(2000).optional().default(''),visibility:z.enum(['public','network','private']).optional().default('network')});
-app.get('/api/ideas',auth,asyncRoute(async(req,res)=>{const t=String(req.query.q||'').slice(0,120);const r=await q(`SELECT i.*,p.full_name AS author_name,p.username,p.avatar_url FROM ideas i JOIN profiles p ON p.id=i.author_id WHERE i.visibility<>'private' OR i.author_id=$1 AND ($2='' OR i.title ILIKE '%'||$2||'%' OR i.problem ILIKE '%'||$2||'%') ORDER BY i.created_at DESC LIMIT 80',[req.user.id,t]);res.json({items:r.rows});}));
+app.get('/api/ideas',auth,asyncRoute(async(req,res)=>{const t=String(req.query.q||'').slice(0,120);const r=await q(`SELECT i.*,p.full_name AS author_name,p.username,p.avatar_url FROM ideas i JOIN profiles p ON p.id=i.author_id WHERE (i.visibility<>'private' OR i.author_id=$1) AND ($2='' OR i.title ILIKE '%'||$2||'%' OR i.problem ILIKE '%'||$2||'%' OR i.domain ILIKE '%'||$2||'%') ORDER BY i.created_at DESC LIMIT 80',[req.user.id,t]);res.json({items:r.rows});}));
 app.post('/api/ideas',auth,validate(ideaSchema),asyncRoute(async(req,res)=>{const b=req.body;const r=await q(`INSERT INTO ideas(author_id,title,problem,solution,domain,stage,ip_status,collaboration_needs,visibility) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *',[req.user.id,b.title,b.problem,b.solution,b.domain,b.stage,b.ip_status,b.collaboration_needs,b.visibility]);res.status(201).json({item:r.rows[0]});}));
 
 app.get('/api/communities',auth,asyncRoute(async(req,res)=>{const r=await q(`SELECT c.*,(SELECT count(*)::int FROM community_members m WHERE m.community_id=c.id) AS member_count,EXISTS(SELECT 1 FROM community_members m WHERE m.community_id=c.id AND m.user_id=$1) AS joined FROM communities c WHERE c.visibility='public' OR EXISTS(SELECT 1 FROM community_members m WHERE m.community_id=c.id AND m.user_id=$1) ORDER BY c.name LIMIT 100',[req.user.id]);res.json({items:r.rows});}));
