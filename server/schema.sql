@@ -61,6 +61,24 @@ CREATE TABLE IF NOT EXISTS reactions (
   created_at timestamptz NOT NULL DEFAULT now(),
   PRIMARY KEY (user_id, post_id, reaction)
 );
+
+CREATE TABLE IF NOT EXISTS poll_votes (
+  post_id uuid NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+  user_id uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  option text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY(post_id,user_id)
+);
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  token_hash text UNIQUE NOT NULL,
+  expires_at timestamptz NOT NULL,
+  used_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_password_reset_expiry ON password_reset_tokens(expires_at);
+
 CREATE TABLE IF NOT EXISTS follows (
   follower_id uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   followed_id uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
