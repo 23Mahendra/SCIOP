@@ -26,10 +26,12 @@ export function SCIOPPathPage({ path }: { path: string }) {
   const queryClient = useQueryClient()
   const [query, setQuery] = useState('')
   const [selectedConversation, setSelectedConversation] = useState<string | null>(() => typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('conversation') : null)
+  const requestedConversation = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('conversation') : null
 
   useEffect(() => {
-    if (!selectedConversation && data?.conversations.length) setSelectedConversation(data.conversations[0].id)
-  }, [data?.conversations, selectedConversation])
+    if (requestedConversation && requestedConversation !== selectedConversation) setSelectedConversation(requestedConversation)
+    else if (!selectedConversation && data?.conversations.length) setSelectedConversation(data.conversations[0].id)
+  }, [data?.conversations, requestedConversation, selectedConversation])
 
   const profile = data?.profiles.find(p => p.id === user?.id)
   const normalized = path.toLowerCase()
